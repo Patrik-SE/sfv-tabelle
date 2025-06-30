@@ -1,0 +1,8 @@
+@media screen and (orientation: portrait) and (pointer: coarse) {
+  .additional_information {
+    display: none;
+  }
+  .header {
+    text-align:end;
+  }
+}
