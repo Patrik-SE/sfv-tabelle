@@ -72,7 +72,7 @@ if (count($htmlContent) > 1) {
                 $content .= "<th class='header' style='text-align:end; padding-right: 10px;'>" . "Pkt" . "</th>";
                 $content .= "</tr>";
             foreach ($tabelle->eintraege as $eintrag) {
-                if ($eintrag->mannschaft == $team) {
+                if ($eintrag->mannschaft == $team && !empty($rgb_color)) {
                     $content .= "<tr style='background-color:rgba(" . $rgb_color . ")'>";
                 } else {
                     $content .= "<tr>";  
