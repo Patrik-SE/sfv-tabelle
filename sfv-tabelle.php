@@ -80,16 +80,13 @@ if (count($htmlContent) > 1) {
                 $content .= "<td style='text-align:end; padding-right: 10px;'>" . $eintrag->rang . "</td>";
                 $content .= "<td> <a href='" . $eintrag->mannschaftLink . "' target='_blank'>" . $eintrag->mannschaft . "</a></td>";
                 $content .= "<td style='text-align:end; padding-left: 10px; padding-right: 10px;'>" . $eintrag->spiele . "</td>";
-
-                    $content .= "<td class='additional_information' style='text-align:end; padding-right: 10px;'>" . $eintrag->siege . "</td>";
-                    $content .= "<td class='additional_information' style='text-align:end; padding-right: 10px;'>" . $eintrag->unentschieden . "</td>";
-                    $content .= "<td class='additional_information' style='text-align:end; padding-right: 10px;'>" . $eintrag->niederlagen . "</td>";
-                    $content .= "<td class='additional_information' style='text-align:end; padding-right: 10px;'>" . $eintrag->toreErzielt . ":" . $eintrag->toreErhalten . "</td>";
-
+                $content .= "<td class='additional_information' style='text-align:end; padding-right: 10px;'>" . $eintrag->siege . "</td>";
+                $content .= "<td class='additional_information' style='text-align:end; padding-right: 10px;'>" . $eintrag->unentschieden . "</td>";
+                $content .= "<td class='additional_information' style='text-align:end; padding-right: 10px;'>" . $eintrag->niederlagen . "</td>";
+                $content .= "<td class='additional_information' style='text-align:end; padding-right: 10px;'>" . $eintrag->toreErzielt . ":" . $eintrag->toreErhalten . "</td>";
                 $content .= "<td style='text-align:end; padding-right: 10px;'>" . $eintrag->tordifferenz . "</td>";
                 $content .= "<td style='text-align:end; padding-right: 10px;'>" . $eintrag->punkte . "</td>";
                 $content .= "</tr>";
-
             }
             $content .= "</table>";
             ob_end_clean();
