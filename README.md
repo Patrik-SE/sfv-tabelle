@@ -13,4 +13,4 @@ Der Shortcode lautet einfach sfv-tabelle und benötigt verpflichtend das URL Arg
 ![grafik](https://github.com/user-attachments/assets/0636cb37-0d54-4238-92fe-10a9902fae99)
 
 
-Zum installieren einfach die Zip Datei in Wordpress über Plugin hinzufügen -> Plugin hochladen (installieren) und das Plugin aktivieren.
+Zum installieren einfach die [Zip Datei](https://github.com/Patrik-SE/sfv-tabelle/releases/download/v0.0.1/sfv-tabelle.zip) in Wordpress über Plugin hinzufügen -> Plugin hochladen (installieren) und das Plugin aktivieren.
