@@ -48,6 +48,7 @@ function sfv_tabelle_shortcode($atts, $content){
 
     }
     curl_close($curl);
+    $rgb_parts = explode(',', $rgb_color);
 
 
     $htmlContent = explode('{"bewerbName"', $htmlContent);
@@ -68,10 +69,10 @@ function sfv_tabelle_shortcode($atts, $content){
                     $content .= "<th style='text-align:end; padding-right: 10px;'>" . "#" . "</th>";
                     $content .= "<th style='text-align:start;'>" . "Mannschaft" . "</th>";
                     $content .= "<th class= 'header' style='padding-left: 10px; padding-right: 10px;'>" . "SP" . "</th>";
-                    $content .= "<th class='additional_information' style='padding-right: 10px;'>" . "S" . "</th>";
-                    $content .= "<th class='additional_information' style='padding-right: 10px;'>" . "U" . "</th>";
-                    $content .= "<th class='additional_information' style='padding-right: 10px;'>" . "N" . "</th>";
-                    $content .= "<th class='additional_information' style='padding-right: 10px;'>" . "Tore" . "</th>";
+                    $content .= "<th class='additional_information' style='text-align:end; padding-right: 10px;'>" . "S" . "</th>";
+                    $content .= "<th class='additional_information' style='text-align:end; padding-right: 10px;'>" . "U" . "</th>";
+                    $content .= "<th class='additional_information' style='text-align:end; padding-right: 10px;'>" . "N" . "</th>";
+                    $content .= "<th class='additional_information' style='text-align:end; padding-right: 10px;'>" . "Tore" . "</th>";
                     $content .= "<th class='header' style='padding-right: 10px;'>" . "+/-" . "</th>";
                     $content .= "<th class='header' style='text-align:end; padding-right: 10px;'>" . "Pkt" . "</th>";
                     $content .= "</tr>";
@@ -106,3 +107,76 @@ function sfv_tabelle_shortcode($atts, $content){
     return $content;
 }
 add_shortcode( 'sfv_tabelle', 'sfv_tabelle_shortcode' );
+
+function sfv_spielplan_shortcode($atts, $content){
+    extract(shortcode_atts(array(
+        'url' => '',
+        'team' => '',
+    ), $atts));
+    $id = explode('/', $url);
+    $id = end($id);
+    $id = explode('?', $id)[0];
+
+    $curl = curl_init();
+    curl_setopt($curl, CURLOPT_HEADER, 0);
+    curl_setopt($curl, CURLOPT_URL, $url);
+    curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true); 
+    curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+
+    $htmlContent = curl_exec($curl);
+    if(curl_error($curl)) {
+        echo "<div> Error: " . curl_error($curl) . "</div>";
+
+    }
+    curl_close($curl);
+    //"tournament":false
+    
+    $htmlContent = explode(',"ergebnisse":[', $htmlContent);
+    if (count($htmlContent) > 1) {
+        $dateTimeFormat = get_option( 'date_format' ) . ' ' . get_option( 'time_format' );
+        // ,"ergebnisse":[ - beginnt die vergangen spiele
+        $completed_games = explode(',"spiele":[', $htmlContent[1])[0];
+        $completed_games = '{"ergebnisse":[' . $completed_games . "}";
+        $completed_games_decoded = json_decode($completed_games, true);
+        if (count($completed_games_decoded['ergebnisse'])>0) {
+            $content .= "<h2>Ergebnisse</h2>";
+            $content .= "<table style='border-collapse: collapse;' width='100%'>";
+            foreach($completed_games_decoded['ergebnisse'] as $game) {
+                if ($game['heimMannschaft'] == $team || $game['gastMannschaft'] == $team) {
+                    $content .= "<tr>";
+                    $content .= "<td> <small>" . wp_date( $dateTimeFormat, $game['anstoss']/1000 ) . "</small><br>";
+                    $content .= $game['heimMannschaft'] . " : " . $game['gastMannschaft'] . "</td>";
+                    $ergebnis = explode('(', $game['ergebnis']);
+                    $content .= "<td style='text-align: center; vertical-align: bottom;'><b>" . $ergebnis[0] . "</b></td>";
+                    $content .= "<td style='text-align: center; vertical-align: bottom;'><small>(" . $ergebnis[1] . "</small></td><tr>";
+                } 
+            }
+            $content .= "</table>";
+        }
+        // "spiele":[ - beginnt die kommenden spiele
+        $upcoming_games = explode(',"spiele":[', $htmlContent[1])[1];
+        $upcoming_games = '{"spiele":[' . explode(',"id":"' . $id . '"', $upcoming_games)[0] . "}";
+        $upcoming_games_decoded = json_decode($upcoming_games, true);
+        if (count($upcoming_games_decoded['spiele']) > 0) {
+            $content .= "<h2>Kommende Spiele</h2>";
+            $content .= "<table style='border-collapse: collapse;' width='100%'>";
+            foreach ($upcoming_games_decoded['spiele'] as $game) {
+                if ($game['heimMannschaft'] == $team || $game['gastMannschaft'] == $team) {
+                    $content .= "<tr>";
+                    $content .= "<td> <small>" . wp_date( $dateTimeFormat, $game['anstoss']/1000 ) . "</small><br>";
+                    $content .= $game['heimMannschaft'] . " : " . $game['gastMannschaft'] . "</td></tr>";
+                }
+            }
+            $content .= "</table>";
+        }
+
+        // ,"id":"221323", - beendet den Block und entspricht der ID im Link
+        
+        
+    } else {
+        $content .= "<div>Keine Einträge gefunden</div>";
+    }
+    return $content;
+}
+add_shortcode( 'sfv_spielplan', 'sfv_spielplan_shortcode' );
