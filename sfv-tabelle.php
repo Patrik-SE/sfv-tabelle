@@ -113,6 +113,8 @@ function sfv_spielplan_shortcode($atts, $content){
         'url' => '',
         'team' => '',
     ), $atts));
+    wp_register_style('custom_css', plugins_url('custom.css',__FILE__ ));
+    wp_enqueue_style('custom_css');
     $id = explode('/', $url);
     $id = end($id);
     $id = explode('?', $id)[0];
@@ -144,12 +146,15 @@ function sfv_spielplan_shortcode($atts, $content){
             $content .= "<table style='border-collapse: collapse;' width='100%'>";
             foreach($completed_games_decoded['ergebnisse'] as $game) {
                 if ($game['heimMannschaft'] == $team || $game['gastMannschaft'] == $team) {
+                    
                     $content .= "<tr>";
                     $content .= "<td> <small>" . wp_date( $dateTimeFormat, $game['anstoss']/1000 ) . "</small><br>";
+                    $content .= "<small class='additional_information'>Schiedsrichter: " . $game['schiedsrichter'] . ", Zuseher: " . $game['zuschauer'] . "<br></small>";
                     $content .= $game['heimMannschaft'] . " : " . $game['gastMannschaft'] . "</td>";
                     $ergebnis = explode('(', $game['ergebnis']);
-                    $content .= "<td style='text-align: center; vertical-align: bottom;'><b>" . $ergebnis[0] . "</b></td>";
-                    $content .= "<td style='text-align: center; vertical-align: bottom;'><small>(" . $ergebnis[1] . "</small></td><tr>";
+                    $content .= "<td style='text-align: center; vertical-align: bottom;'><b><a  href=" . $game['links'][0]['link'] . ">" . $ergebnis[0] . "</a></b></td>"; 
+                    $content .= "<td style='text-align: center; vertical-align: bottom;'><small>(" . $ergebnis[1] . "</small></td></a></tr>";
+
                 } 
             }
             $content .= "</table>";
